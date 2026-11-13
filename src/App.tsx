@@ -12,6 +12,7 @@ import {
   Play,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import confetti from 'canvas-confetti';
 import {
   UNITS_DATA,
   RANDOM_LETTERS_POOL,
@@ -365,6 +366,18 @@ export default function App() {
 
     if (isCorrect) {
       playSound('correct');
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        confetti({
+          particleCount: 85,
+          spread: 75,
+          origin: { y: 0.6 },
+          colors: ['#10b981', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6'],
+          disableForReducedMotion: true,
+        });
+      }
       const nextScore = firstTryCorrect ? score + 1 : score;
       setScore(nextScore);
       setShowCelebration(true);
@@ -690,23 +703,40 @@ export default function App() {
               <AnimatePresence>
                 {showCelebration && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.18 }}
                     className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm p-6"
                   >
-                    <div className="text-7xl sm:text-8xl mb-4">{currentWord.emoji}</div>
-                    <div className="text-4xl sm:text-5xl font-black text-emerald-600 mb-3">
+                    <motion.div
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+                      className="text-7xl sm:text-8xl mb-4"
+                    >
+                      {currentWord.emoji}
+                    </motion.div>
+                    <motion.div
+                      initial={{ scale: 0.4, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 20, delay: 0.04 }}
+                      className="text-4xl sm:text-5xl font-black text-emerald-600 mb-3"
+                    >
                       أحسنتِ!
-                    </div>
-                    <div className="flex items-center gap-3 text-xl font-bold text-slate-700">
+                    </motion.div>
+                    <motion.div
+                      initial={{ y: 8, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.22, delay: 0.08 }}
+                      className="flex items-center gap-3 text-xl font-bold text-slate-700"
+                    >
                       <span dir="ltr" className="font-english text-2xl font-black text-slate-900">
                         {currentWord.word}
                       </span>
                       <span aria-hidden="true">·</span>
                       <span>{currentWord.translation}</span>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 )}
               </AnimatePresence>
