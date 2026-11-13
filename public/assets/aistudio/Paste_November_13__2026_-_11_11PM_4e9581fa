@@ -1,0 +1,635 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Volume2, ArrowRight, Star, Home, CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
+
+const unitsData = {
+unit1: {
+id: 1,
+title: "Welcome to My School",
+subtitle: "مرحباً بك في مدرستي",
+color: "from-pink-400 to-purple-500",
+words: [
+{ word: "hello", translation: "مرحباً", emoji: "👋" },
+{ word: "goodbye", translation: "إلى اللقاء", emoji: "🚶" },
+{ word: "play", translation: "يلعب", emoji: "⚽" },
+{ word: "friends", translation: "أصدقاء", emoji: "🫂" },
+{ word: "teacher", translation: "معلم", emoji: "👨‍🏫" },
+{ word: "board", translation: "سبورة", emoji: "🟩" },
+{ word: "book", translation: "كتاب", emoji: "📘" },
+{ word: "desk", translation: "مكتب", emoji: "🪑" },
+{ word: "chair", translation: "كرسي", emoji: "🪑" },
+{ word: "pencil", translation: "قلم رصاص", emoji: "✏️" },
+{ word: "bag", translation: "حقيبة", emoji: "🎒" },
+{ word: "tomato", translation: "طماطم", emoji: "🍅" },
+{ word: "table", translation: "طاولة", emoji: "🪑" },
+{ word: "tree", translation: "شجرة", emoji: "🌳" },
+{ word: "tiger", translation: "نمر", emoji: "🐅" },
+{ word: "ink", translation: "حبر", emoji: "🖋️" },
+{ word: "insect", translation: "حشرة", emoji: "🐞" },
+{ word: "ill", translation: "مريض", emoji: "🤒" }
+]
+},
+unit2: {
+id: 2,
+title: "The Garden of Colors and Shapes",
+subtitle: "حديقة الألوان والأشكال",
+color: "from-green-400 to-blue-500",
+words: [
+{ word: "grass", translation: "عشب", emoji: "🌿" },
+{ word: "flower", translation: "زهرة", emoji: "🌸" },
+{ word: "sky", translation: "سماء", emoji: "☁️" },
+{ word: "sun", translation: "شمس", emoji: "☀️" },
+{ word: "tree", translation: "شجرة", emoji: "🌳" },
+{ word: "bird", translation: "طائر", emoji: "🐦" },
+{ word: "butterfly", translation: "فراشة", emoji: "🦋" },
+{ word: "red", translation: "أحمر", emoji: "🔴" },
+{ word: "yellow", translation: "أصفر", emoji: "🟡" },
+{ word: "blue", translation: "أزرق", emoji: "🔵" },
+{ word: "green", translation: "أخضر", emoji: "🟢" },
+{ word: "circle", translation: "دائرة", emoji: "⭕" },
+{ word: "square", translation: "مربع", emoji: "🟥" },
+{ word: "rectangle", translation: "مستطيل", emoji: "▭" },
+{ word: "triangle", translation: "مثلث", emoji: "🔺" },
+{ word: "star", translation: "نجمة", emoji: "⭐" },
+{ word: "snake", translation: "ثعبان", emoji: "🐍" },
+{ word: "spider", translation: "عنكبوت", emoji: "🕷️" },
+{ word: "spoon", translation: "ملعقة", emoji: "🥄" },
+{ word: "ant", translation: "نملة", emoji: "🐜" },
+{ word: "apple", translation: "تفاحة", emoji: "🍎" },
+{ word: "axe", translation: "فأس", emoji: "🪓" },
+{ word: "arrow", translation: "سهم", emoji: "↗️" }
+]
+},
+unit3: {
+id: 3,
+title: "I Love My Family",
+subtitle: "أنا أحب أسرتي",
+color: "from-yellow-400 to-orange-500",
+words: [
+{ word: "father", translation: "أب", emoji: "👨" },
+{ word: "mother", translation: "أم", emoji: "👩" },
+{ word: "brother", translation: "أخ", emoji: "👦" },
+{ word: "sister", translation: "أخت", emoji: "👧" },
+{ word: "parents", translation: "الوالدين", emoji: "👫" },
+{ word: "grandfather", translation: "جد", emoji: "👴" },
+{ word: "grandmother", translation: "جدة", emoji: "👵" },
+{ word: "nose", translation: "أنف", emoji: "👃" },
+{ word: "neck", translation: "رقبة", emoji: "🦒" },
+{ word: "nail", translation: "مسمار", emoji: "🔨" },
+{ word: "nurse", translation: "ممرضة", emoji: "👩‍⚕️" },
+{ word: "net", translation: "شبكة", emoji: "🥅" },
+{ word: "pencil", translation: "قلم رصاص", emoji: "✏️" },
+{ word: "panda", translation: "باندا", emoji: "🐼" },
+{ word: "pizza", translation: "بيتزا", emoji: "🍕" },
+{ word: "potato", translation: "بطاطس", emoji: "🥔" },
+{ word: "parrot", translation: "ببغاء", emoji: "🦜" },
+{ word: "hair", translation: "شعر", emoji: "💇" },
+{ word: "house", translation: "منزل", emoji: "🏠" },
+{ word: "horse", translation: "حصان", emoji: "🐎" },
+{ word: "hat", translation: "قبعة", emoji: "👒" },
+{ word: "hands", translation: "أيدي", emoji: "👐" },
+{ word: "door", translation: "باب", emoji: "🚪" },
+{ word: "doll", translation: "دمية", emoji: "🪆" },
+{ word: "dog", translation: "كلب", emoji: "🐶" },
+{ word: "duck", translation: "بطة", emoji: "🦆" },
+{ word: "drum", translation: "طبلة", emoji: "🥁" },
+{ word: "one", translation: "واحد", emoji: "1️⃣" },
+{ word: "two", translation: "اثنان", emoji: "2️⃣" },
+{ word: "three", translation: "ثلاثة", emoji: "3️⃣" },
+{ word: "four", translation: "أربعة", emoji: "4️⃣" },
+{ word: "five", translation: "خمسة", emoji: "5️⃣" }
+]
+},
+unit4: {
+id: 4,
+title: "My Body and My Senses",
+subtitle: "جسمي وحواسي",
+color: "from-teal-400 to-emerald-500",
+words: [
+{ word: "eye", translation: "عين", emoji: "👁️" },
+{ word: "nose", translation: "أنف", emoji: "👃" },
+{ word: "mouth", translation: "فم", emoji: "👄" },
+{ word: "ear", translation: "أذن", emoji: "👂" },
+{ word: "hand", translation: "يد", emoji: "✋" },
+{ word: "head", translation: "رأس", emoji: "👤" },
+{ word: "tongue", translation: "لسان", emoji: "👅" },
+{ word: "arm", translation: "ذراع", emoji: "💪" },
+{ word: "leg", translation: "ساق", emoji: "🦵" },
+{ word: "foot", translation: "قدم", emoji: "🦶" },
+{ word: "toes", translation: "أصابع القدم", emoji: "👣" },
+{ word: "hear", translation: "يسمع", emoji: "👂" },
+{ word: "touch", translation: "يلمس", emoji: "👆" },
+{ word: "see", translation: "يرى", emoji: "👁️" },
+{ word: "smell", translation: "يشم", emoji: "👃" },
+{ word: "taste", translation: "يتذوق", emoji: "👅" },
+{ word: "rocket", translation: "صاروخ", emoji: "🚀" },
+{ word: "ring", translation: "خاتم", emoji: "💍" },
+{ word: "red", translation: "أحمر", emoji: "🔴" },
+{ word: "rabbit", translation: "أرنب", emoji: "🐇" },
+{ word: "robot", translation: "إنسان آلي", emoji: "🤖" },
+{ word: "egg", translation: "بيضة", emoji: "🥚" },
+{ word: "eggplant", translation: "باذنجان", emoji: "🍆" },
+{ word: "elephant", translation: "فيل", emoji: "🐘" },
+{ word: "elbow", translation: "كوع", emoji: "💪" },
+{ word: "cat", translation: "قطة", emoji: "🐈" },
+{ word: "cup", translation: "فنجان", emoji: "☕" },
+{ word: "car", translation: "سيارة", emoji: "🚗" },
+{ word: "carrot", translation: "جزرة", emoji: "🥕" },
+{ word: "cake", translation: "كيكة", emoji: "🍰" },
+{ word: "kangaroo", translation: "كنغر", emoji: "🦘" },
+{ word: "kite", translation: "طائرة ورقية", emoji: "🪁" },
+{ word: "king", translation: "ملك", emoji: "👑" },
+{ word: "key", translation: "مفتاح", emoji: "🔑" }
+]
+},
+unit5: {
+id: 5,
+title: "On the Farm",
+subtitle: "في المزرعة",
+color: "from-amber-400 to-red-500",
+words: [
+{ word: "duck", translation: "بطة", emoji: "🦆" },
+{ word: "cow", translation: "بقرة", emoji: "🐄" },
+{ word: "chicken", translation: "دجاجة", emoji: "🐔" },
+{ word: "horse", translation: "حصان", emoji: "🐎" },
+{ word: "big", translation: "كبير الحجم", emoji: "🐘" },
+{ word: "small", translation: "صغير الحجم", emoji: "🐁" },
+{ word: "love", translation: "يحب", emoji: "❤️" },
+{ word: "milk", translation: "لبن", emoji: "🥛" },
+{ word: "moon", translation: "قمر", emoji: "🌕" },
+{ word: "mouse", translation: "فأر", emoji: "🐭" },
+{ word: "mango", translation: "مانجو", emoji: "🥭" },
+{ word: "monkey", translation: "قرد", emoji: "🐒" },
+{ word: "goat", translation: "ماعز", emoji: "🐐" },
+{ word: "gloves", translation: "قفازات", emoji: "🧤" },
+{ word: "guitar", translation: "آلة الجيتار", emoji: "🎸" },
+{ word: "grapes", translation: "عنب", emoji: "🍇" },
+{ word: "girl", translation: "بنت", emoji: "👧" },
+{ word: "six", translation: "رقم ستة", emoji: "6️⃣" },
+{ word: "seven", translation: "رقم سبعة", emoji: "7️⃣" },
+{ word: "eight", translation: "رقم ثمانية", emoji: "8️⃣" },
+{ word: "nine", translation: "رقم تسعة", emoji: "9️⃣" },
+{ word: "ten", translation: "رقم عشرة", emoji: "🔟" },
+{ word: "octopus", translation: "أخطبوط", emoji: "🐙" },
+{ word: "olive", translation: "زيتون", emoji: "🫒" },
+{ word: "on", translation: "على", emoji: "⬆️" },
+{ word: "ostrich", translation: "نعامة", emoji: "🦤" },
+{ word: "fish", translation: "سمكة", emoji: "🐟" },
+{ word: "fan", translation: "مروحة", emoji: "🪭" },
+{ word: "fox", translation: "ثعلب", emoji: "🦊" },
+{ word: "fork", translation: "شوكة", emoji: "🍴" },
+{ word: "frog", translation: "ضفدعة", emoji: "🐸" }
+]
+},
+unit6: {
+id: 6,
+title: "Animals Around Me",
+subtitle: "الحيوانات من حولي",
+color: "from-emerald-400 to-teal-600",
+words: [
+{ word: "lion", translation: "أسد", emoji: "🦁" },
+{ word: "tiger", translation: "نمر", emoji: "🐅" },
+{ word: "monkey", translation: "قرد", emoji: "🐒" },
+{ word: "elephant", translation: "فيل", emoji: "🐘" },
+{ word: "snake", translation: "ثعبان", emoji: "🐍" },
+{ word: "giraffe", translation: "زرافة", emoji: "🦒" },
+{ word: "ground", translation: "أرض", emoji: "🌍" },
+{ word: "jungle", translation: "غابة", emoji: "🌴" },
+{ word: "boy", translation: "ولد", emoji: "👦" },
+{ word: "banana", translation: "موز", emoji: "🍌" },
+{ word: "ball", translation: "كرة", emoji: "⚽" },
+{ word: "bird", translation: "طائر", emoji: "🐦" },
+{ word: "bike", translation: "دراجة", emoji: "🚲" },
+{ word: "lunch", translation: "وجبة الغداء", emoji: "🍱" },
+{ word: "leaf", translation: "ورقة شجر", emoji: "🍃" },
+{ word: "lamp", translation: "لمبة / مصباح", emoji: "💡" },
+{ word: "lemon", translation: "ليمونة", emoji: "🍋" },
+{ word: "cat", translation: "قطة", emoji: "🐈" },
+{ word: "turtle", translation: "سلحفاة", emoji: "🐢" },
+{ word: "dog", translation: "كلب", emoji: "🐶" },
+{ word: "chair", translation: "كرسي", emoji: "🪑" },
+{ word: "cage", translation: "قفص", emoji: "🪤" },
+{ word: "table", translation: "منضدة", emoji: "🪑" },
+{ word: "couch", translation: "أريكة", emoji: "🛋️" },
+{ word: "in", translation: "في / داخل", emoji: "📥" },
+{ word: "under", translation: "تحت", emoji: "⬇️" },
+{ word: "umbrella", translation: "شمسية", emoji: "☂️" },
+{ word: "up", translation: "أعلى", emoji: "⬆️" },
+{ word: "unlock", translation: "يفتح", emoji: "🔓" },
+{ word: "jam", translation: "مربى", emoji: "🍯" },
+{ word: "jacket", translation: "جاكيت", emoji: "🧥" },
+{ word: "jar", translation: "برطمان", emoji: "🫙" },
+{ word: "jellyfish", translation: "قنديل البحر", emoji: "🪼" },
+{ word: "jeans", translation: "بنطلون جينز", emoji: "👖" }
+]
+}
+};
+
+const randomLettersPool = ['T', 'I', 'M', 'S', 'A', 'P', 'H', 'D', 'N', 'R', 'E', 'C', 'K', 'O', 'B', 'L', 'F', 'G', 'U', 'J'];
+const GAME_TYPES = ['FIND_PICTURE', 'TICK_WORD', 'MISSING_SOUND', 'STARTS_WITH', 'UNSCRAMBLE', 'READ_CIRCLE', 'MATCH_LETTER', 'LOOK_WRITE'];
+
+export default function EnglishGame() {
+const [currentScreen, setCurrentScreen] = useState('MENU');
+const [activeUnit, setActiveUnit] = useState(null);
+
+const [score, setScore] = useState(0);
+const [questionsPlayed, setQuestionsPlayed] = useState(0);
+const [currentWord, setCurrentWord] = useState(null);
+const [options, setOptions] = useState([]);
+const [gameType, setGameType] = useState('FIND_PICTURE');
+const [showCelebration, setShowCelebration] = useState(false);
+const [scrambledWord, setScrambledWord] = useState([]);
+const [userSpelled, setUserSpelled] = useState([]);
+
+const audioCtx = useRef(null);
+
+useEffect(() => {
+if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
+audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
+}
+}, []);
+
+const playSound = (type) => {
+if (!audioCtx.current) return;
+const ctx = audioCtx.current;
+
+if (ctx.state === 'suspended') {
+    ctx.resume();
+}
+
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+osc.connect(gain);
+gain.connect(ctx.destination);
+
+if (type === 'correct') {
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+  osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.5);
+} else if (type === 'wrong') {
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(200, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.3);
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.3);
+}
+};
+
+const speakWord = (text) => {
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+window.speechSynthesis.cancel();
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = 'en-US';
+utterance.rate = 0.8;
+utterance.pitch = 1.2;
+window.speechSynthesis.speak(utterance);
+}
+};
+
+const getRandomItems = (arr, count, exclude) => {
+const filtered = arr.filter(item => item.word !== exclude?.word);
+const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+return shuffled.slice(0, count);
+};
+
+const setupQuestion = (unitKey) => {
+const wordsList = unitsData[unitKey].words;
+let nextGameType = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
+
+const shortWords = wordsList.filter(w => !w.word.includes(' ') && w.word.length <= 5);
+let targetWord;
+
+if (nextGameType === 'UNSCRAMBLE') {
+   if (shortWords.length > 0) {
+       targetWord = shortWords[Math.floor(Math.random() * shortWords.length)];
+   } else {
+       const shortestWord = [...wordsList].sort((a,b) => a.word.length - b.word.length)[0];
+       if (shortestWord.word.length > 7 || shortestWord.word.includes(' ')) {
+           nextGameType = 'FIND_PICTURE'; 
+           targetWord = wordsList[Math.floor(Math.random() * wordsList.length)];
+       } else {
+           targetWord = shortestWord;
+       }
+   }
+} else {
+  targetWord = wordsList[Math.floor(Math.random() * wordsList.length)];
+}
+
+setCurrentWord(targetWord);
+setGameType(nextGameType);
+setShowCelebration(false);
+
+if (['FIND_PICTURE', 'MATCH_LETTER', 'LOOK_WRITE', 'STARTS_WITH'].includes(nextGameType)) {
+  const distractors = getRandomItems(wordsList, 3, targetWord);
+  const allOptions = [...distractors, targetWord].sort(() => 0.5 - Math.random());
+  setOptions(allOptions);
+  if (['FIND_PICTURE', 'MATCH_LETTER'].includes(nextGameType)) {
+    speakWord(targetWord.word);
+  }
+} else if (['TICK_WORD', 'READ_CIRCLE'].includes(nextGameType)) {
+  const distractors = getRandomItems(wordsList, 1, targetWord);
+  const allOptions = [...distractors, targetWord].sort(() => 0.5 - Math.random());
+  setOptions(allOptions);
+} else if (nextGameType === 'MISSING_SOUND') {
+  const firstLetter = targetWord.word.charAt(0).toUpperCase();
+  const distractorLetters = randomLettersPool.filter(l => l !== firstLetter).sort(() => 0.5 - Math.random()).slice(0, 2);
+  const allLetters = [firstLetter, ...distractorLetters].sort(() => 0.5 - Math.random());
+  setOptions(allLetters);
+  speakWord(targetWord.word);
+} else if (nextGameType === 'UNSCRAMBLE') {
+  const letters = targetWord.word.split('').map((char, i) => ({ id: i, char }));
+  setScrambledWord(letters.sort(() => 0.5 - Math.random()));
+  setUserSpelled([]);
+  speakWord(targetWord.word);
+}
+};
+
+const startLesson = (unitKey) => {
+if (audioCtx.current && audioCtx.current.state === 'suspended') {
+audioCtx.current.resume();
+}
+setActiveUnit(unitKey);
+setScore(0);
+setQuestionsPlayed(0);
+setCurrentScreen('GAME');
+setupQuestion(unitKey);
+};
+
+const handleAnswer = (isCorrect) => {
+if (isCorrect) {
+playSound('correct');
+setShowCelebration(true);
+setScore(prev => prev + 1);
+setTimeout(() => {
+if (questionsPlayed + 1 >= 24) {
+setCurrentScreen('MENU');
+} else {
+setQuestionsPlayed(prev => prev + 1);
+setupQuestion(activeUnit);
+}
+}, 1500);
+} else {
+playSound('wrong');
+if (gameType === 'UNSCRAMBLE') {
+setUserSpelled([]);
+setScrambledWord(currentWord.word.split('').map((char, i) => ({ id: i, char })).sort(() => 0.5 - Math.random()));
+}
+}
+};
+
+const handleSpelling = (letterObj) => {
+const newSpelled = [...userSpelled, letterObj];
+setUserSpelled(newSpelled);
+setScrambledWord(scrambledWord.filter(l => l.id !== letterObj.id));
+
+if (newSpelled.length === currentWord.word.length) {
+  const formedWord = newSpelled.map(l => l.char).join('');
+  if (formedWord === currentWord.word) {
+    handleAnswer(true);
+  } else {
+    setTimeout(() => handleAnswer(false), 500);
+  }
+}
+};
+
+const handleRemoveSpelledLetter = (letterObj) => {
+setUserSpelled(userSpelled.filter(l => l.id !== letterObj.id));
+setScrambledWord([...scrambledWord, letterObj]);
+};
+
+if (currentScreen === 'MENU') {
+return (<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Object.keys(unitsData).map((key) => (
+          <button
+            key={key}
+            onClick={() => startLesson(key)}
+            className={`bg-gradient-to-br ${unitsData[key].color} text-white rounded-[2rem] p-6 transform transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-${unitsData[key].color.split('-')[1]}/30 flex flex-col items-center justify-center border-[6px] border-white/30 group relative overflow-hidden min-h-[180px]`}
+          >
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="bg-white/20 rounded-full px-4 py-1.5 mb-3 backdrop-blur-sm">
+              <span className="text-xl font-bold tracking-wider">الوحدة {unitsData[key].id}</span>
+            </div>
+            <span className="text-2xl md:text-3xl font-extrabold mb-1 drop-shadow-md">{unitsData[key].subtitle}</span>
+            <span className="text-sm md:text-base font-medium opacity-90 tracking-wide mt-2">{unitsData[key].title}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>);
+}
+
+return (<button
+onClick={() => setCurrentScreen('MENU')}
+className="flex items-center gap-1 md:gap-2 bg-slate-100 text-slate-600 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-200 transition-colors text-sm md:text-base"
+>الرئيسية {score} {questionsPlayed + 1} / 24
+
+  <div className="bg-white rounded-[2.5rem] shadow-xl p-6 md:p-8 w-full max-w-4xl text-center relative border-4 border-white min-h-[500px] flex flex-col justify-center overflow-hidden ring-1 ring-slate-100">
+    
+    {showCelebration && (
+      <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 rounded-[2rem] animate-in fade-in duration-300">
+        <div className="text-7xl md:text-8xl animate-bounce mb-4">🎉</div>
+        <div className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">أحسنتِ!</div>
+      </div>
+    )}
+    
+    {gameType === 'FIND_PICTURE' && (
+      <div className="animate-in slide-in-from-bottom-4 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-8 tracking-tight">أين الصورة الصحيحة؟ <span className="inline-block animate-pulse">🔍</span></h2>
+        <button 
+          onClick={() => speakWord(currentWord.word)}
+          className="mx-auto mb-10 bg-indigo-50 text-indigo-600 px-8 py-4 rounded-full hover:bg-indigo-100 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 border-2 border-indigo-100"
+        >
+          <Volume2 size="{28}"/>
+          <span className="text-xl md:text-2xl font-bold">اسمعي الكلمة</span>
+        </button>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt.word === currentWord.word)}
+              className="text-7xl md:text-[5.5rem] p-6 md:p-8 bg-sky-50/50 rounded-3xl hover:bg-sky-100 hover:-translate-y-2 active:scale-95 transition-all border-2 border-sky-100 hover:shadow-lg hover:border-sky-300 aspect-square flex items-center justify-center"
+            >
+              {opt.emoji}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'TICK_WORD' && (
+      <div className="animate-in zoom-in-95 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-8 tracking-tight">اختاري الكلمة الصحيحة <span className="text-emerald-500">✅</span></h2>
+        <div className="text-[7rem] md:text-[9rem] mb-12 drop-shadow-xl hover:scale-110 transition-transform duration-300">{currentWord.emoji}</div>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt.word === currentWord.word)}
+              className="text-2xl md:text-4xl font-bold text-slate-700 bg-white px-8 py-6 rounded-3xl hover:bg-emerald-50 hover:text-emerald-600 hover:-translate-y-1 active:scale-95 transition-all border-4 border-slate-100 hover:border-emerald-200 w-full sm:w-64 shadow-sm"
+            >
+              {opt.word}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'MISSING_SOUND' && (
+      <div className="animate-in slide-in-from-right-8 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-8 tracking-tight">ما هو الحرف الناقص؟ <span className="inline-block animate-pulse">🔊</span></h2>
+        <button onClick={() => speakWord(currentWord.word)} className="mx-auto mb-10 bg-indigo-50 text-indigo-600 p-4 md:p-5 rounded-full hover:bg-indigo-100 shadow-sm hover:scale-110 transition-transform">
+          <Volume2 size="{32}"/>
+        </button>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-12">
+          <div className="text-7xl md:text-[6rem] drop-shadow-lg">{currentWord.emoji}</div>
+          <div className="text-5xl md:text-6xl font-black text-slate-800 tracking-[0.2em] bg-slate-50 px-8 py-6 rounded-3xl border-2 border-dashed border-slate-300 shadow-inner">
+            <span className="text-rose-500 border-b-[6px] border-rose-500 px-3 pb-1 mr-3 relative top-[-4px]">_</span>
+            {currentWord.word.slice(1)}
+          </div>
+        </div>
+        <div className="flex justify-center gap-4 md:gap-6">
+          {options.map((letter, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(letter.toLowerCase() === currentWord.word.charAt(0).toLowerCase())}
+              className="text-4xl md:text-5xl font-black text-rose-500 bg-rose-50 w-20 h-20 md:w-24 md:h-24 rounded-3xl hover:bg-rose-500 hover:text-white active:scale-95 transition-all border-4 border-rose-100 hover:border-rose-500 shadow-sm flex items-center justify-center"
+            >
+              {letter}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'STARTS_WITH' && (
+      <div className="animate-in fade-in duration-700">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-10 tracking-tight">أي صورة تبدأ بهذا الحرف؟ <span className="text-amber-400">✨</span></h2>
+        <div className="text-[5rem] md:text-[6rem] font-black text-amber-500 mb-12 bg-gradient-to-br from-amber-50 to-amber-100/50 w-36 h-36 md:w-44 md:h-44 mx-auto rounded-[2.5rem] flex items-center justify-center border-4 border-amber-200 shadow-lg shadow-amber-100/50 transform -rotate-3">
+          {currentWord.word.charAt(0).toUpperCase()}{currentWord.word.charAt(0).toLowerCase()}
+        </div>
+        <div className="flex justify-center gap-4 md:gap-8">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt.word === currentWord.word)}
+              className="text-6xl md:text-[5.5rem] p-6 md:p-8 bg-white rounded-[2rem] hover:bg-amber-50 hover:-translate-y-2 active:scale-95 transition-all border-4 border-slate-100 hover:border-amber-300 shadow-md hover:shadow-xl aspect-square flex items-center justify-center"
+            >
+              {opt.emoji}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'UNSCRAMBLE' && (
+      <div className="animate-in slide-in-from-top-4 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-3 tracking-tight">رتّبي الحروف لتكوين الكلمة <span className="text-sky-500">🧩</span></h2>
+        <p className="text-slate-400 mb-8 text-sm md:text-base font-medium bg-slate-50 inline-block px-4 py-1.5 rounded-full">(اضغطي على الحرف لإلغائه إذا أخطأتِ 👆)</p>
+        <div className="text-7xl md:text-[6rem] mb-10 drop-shadow-xl">{currentWord.emoji}</div>
+        
+        <div className="flex justify-center gap-2 md:gap-3 mb-10 min-h-[70px] md:min-h-[90px] flex-wrap px-4">
+          {Array(currentWord.word.length).fill(0).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => userSpelled[i] && handleRemoveSpelledLetter(userSpelled[i])}
+              className={`w-14 h-14 md:w-20 md:h-20 rounded-2xl border-[3px] flex items-center justify-center text-3xl md:text-4xl font-black transition-all duration-200 ${
+                userSpelled[i] 
+                ? 'bg-gradient-to-b from-emerald-50 to-emerald-100 border-emerald-400 text-emerald-700 hover:from-rose-50 hover:to-rose-100 hover:border-rose-400 hover:text-rose-600 cursor-pointer shadow-sm transform scale-100' 
+                : 'border-dashed border-slate-300 bg-slate-50/50 cursor-default transform scale-95'
+              }`}
+            >
+              {userSpelled[i]?.char || ''}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-center gap-3 md:gap-4 flex-wrap max-w-2xl mx-auto px-4">
+          {scrambledWord.map((letter) => (
+            <button
+              key={letter.id}
+              onClick={() => handleSpelling(letter)}
+              className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-b from-sky-400 to-sky-500 text-white rounded-2xl text-3xl md:text-4xl font-black hover:from-sky-300 hover:to-sky-400 active:scale-90 active:translate-y-2 transition-all shadow-[0_6px_0_0_#0284c7] hover:shadow-[0_4px_0_0_#0284c7] active:shadow-none mb-2"
+            >
+              {letter.char}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'READ_CIRCLE' && (
+      <div className="animate-in zoom-in-90 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-10 tracking-tight">اقرأي واختاري الصورة <span className="text-indigo-400">📖</span></h2>
+        <div className="text-5xl md:text-7xl font-black text-slate-700 tracking-[0.1em] bg-white px-12 py-8 rounded-[2.5rem] border-4 border-slate-100 inline-block mb-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          {currentWord.word}
+        </div>
+        <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt.word === currentWord.word)}
+              className="text-[5.5rem] md:text-[7rem] p-6 md:p-8 bg-sky-50/30 rounded-[3rem] hover:bg-sky-50 hover:scale-105 active:scale-95 transition-all border-4 border-transparent hover:border-sky-200 shadow-sm aspect-square flex items-center justify-center"
+            >
+              {opt.emoji}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {gameType === 'MATCH_LETTER' && (
+      <div className="animate-in slide-in-from-left-8 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-10 tracking-tight">صِلي الحرف بالصورة المناسبة <span className="text-rose-400">🔠</span></h2>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+          <div className="text-[6rem] md:text-[8rem] font-black text-white bg-gradient-to-br from-rose-400 to-pink-500 w-40 h-40 md:w-52 md:h-52 rounded-[2.5rem] flex items-center justify-center shadow-xl shadow-rose-200 shrink-0 transform rotate-3">
+            {currentWord.word.charAt(0).toUpperCase()}
+          </div>
+          <div className="hidden md:flex flex-col gap-2 opacity-30">
+            <ChevronRight className="text-slate-400" size="{40}"/>
+            <ChevronRight className="text-slate-400" size="{40}"/>
+            <ChevronRight className="text-slate-400" size="{40}"/>
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-sm">
+            {options.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => handleAnswer(opt.word === currentWord.word)}
+                className="text-6xl md:text-[5rem] p-6 bg-slate-50/50 rounded-3xl hover:bg-rose-50 active:scale-95 transition-all border-[3px] border-slate-100 hover:border-rose-300 shadow-sm flex justify-center items-center aspect-square hover:rotate-3"
+              >
+                {opt.emoji}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+
+    {gameType === 'LOOK_WRITE' && (
+      <div className="animate-in fade-in zoom-in-95 duration-500">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-700 mb-8 tracking-tight">انظري واختاري الكلمة <span className="text-teal-500">✍️</span></h2>
+        <div className="text-[7rem] md:text-[9rem] mb-12 drop-shadow-2xl hover:scale-110 transition-transform duration-500 cursor-pointer" onClick={() => speakWord(currentWord.word)} title="استمع">
+          {currentWord.emoji}
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:gap-6 max-w-xl mx-auto w-full px-4">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt.word === currentWord.word)}
+              className="text-2xl md:text-3xl font-bold text-slate-600 bg-white p-5 md:p-6 rounded-2xl hover:bg-teal-50 hover:text-teal-600 active:scale-95 transition-all border-[3px] border-slate-100 hover:border-teal-400 shadow-sm w-full"
+            >
+              {opt.word}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+</div>
+);
+}
